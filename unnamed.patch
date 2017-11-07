@@ -1,0 +1,2617 @@
+Index: app/proguard-rules.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/proguard-rules.pro	(revision )
++++ app/proguard-rules.pro	(revision )
+@@ -0,0 +1,17 @@
++# Add project specific ProGuard rules here.
++# By default, the flags in this file are appended to flags specified
++# in I:\android-sdk/tools/proguard/proguard-android.txt
++# You can edit the include path and order by changing the proguardFiles
++# directive in build.gradle.
++#
++# For more details, see
++#   http://developer.android.com/guide/developing/tools/proguard.html
++
++# Add any project specific keep options here:
++
++# If your project uses WebView with JS, uncomment the following
++# and specify the fully qualified class name to the JavaScript interface
++# class:
++#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
++#   public *;
++#}
+Index: app/src/main/res/layout/page_item.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/page_item.xml	(revision )
++++ app/src/main/res/layout/page_item.xml	(revision )
+@@ -0,0 +1,6 @@
++<TextView android:id="@+id/tv"
++    android:layout_margin="5dp"
++    android:layout_width="match_parent"
++    android:layout_height="200dp"
++    android:gravity="center"
++    xmlns:android="http://schemas.android.com/apk/res/android" />
+\ No newline at end of file
+Index: app/src/main/java/com/example/zcp/recyclerviewdemo/MyOkhttp.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/zcp/recyclerviewdemo/MyOkhttp.java	(revision )
++++ app/src/main/java/com/example/zcp/recyclerviewdemo/MyOkhttp.java	(revision )
+@@ -0,0 +1,37 @@
++package com.example.zcp.recyclerviewdemo;
++
++import java.io.IOException;
++import java.util.concurrent.TimeUnit;
++
++import okhttp3.OkHttpClient;
++import okhttp3.Request;
++import okhttp3.Response;
++
++
++/**
++ * Created by 赵晨璞 on 2016/6/16.
++ */
++public class MyOkhttp {
++
++    public static OkHttpClient client = new OkHttpClient();
++
++    public static String get(String url){
++        try {
++         client.newBuilder().connectTimeout(10000, TimeUnit.MILLISECONDS);
++        Request request = new Request.Builder().url(url).build();
++
++        Response response = client.newCall(request).execute();
++        if (response.isSuccessful()) {
++            return response.body().string();
++        } else {
++            throw new IOException("Unexpected code " + response);
++        }
++        } catch (IOException e) {
++
++            e.printStackTrace();
++        }
++        return null;
++    }
++
++
++}
+Index: app/src/main/java/com/example/zcp/recyclerviewdemo/SnackbarUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/zcp/recyclerviewdemo/SnackbarUtil.java	(revision )
++++ app/src/main/java/com/example/zcp/recyclerviewdemo/SnackbarUtil.java	(revision )
+@@ -0,0 +1,171 @@
++package com.example.zcp.recyclerviewdemo;
++
++import android.graphics.Color;
++import android.support.design.widget.Snackbar;
++import android.view.Gravity;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.widget.LinearLayout;
++import android.widget.TextView;
++
++/**
++ * Created by 赵晨璞 on 2016/6/16.
++ * 彩色Snackbar工具类，请看我之前的文章《没时间解释了，快使用Snackbar!——Android Snackbar花式使用指南》
++ * http://www.jianshu.com/p/cd1e80e64311
++ */
++public class SnackbarUtil {
++
++    public static final   int Info = 1;
++    public static final  int Confirm = 2;
++    public static final  int Warning = 3;
++    public static final  int Alert = 4;
++
++
++    public static  int red = 0xfff44336;
++    public static  int green = 0xff4caf50;
++    public static  int blue = 0xff2195f3;
++    public static  int orange = 0xffffc107;
++
++    /**
++     * 短显示Snackbar，自定义颜色
++     * @param view
++     * @param message
++     * @param messageColor
++     * @param backgroundColor
++     * @return
++     */
++    public static Snackbar ShortSnackbar(View view, String message, int messageColor, int backgroundColor){
++        Snackbar snackbar = Snackbar.make(view,message, Snackbar.LENGTH_SHORT);
++        setSnackbarColor(snackbar,messageColor,backgroundColor);
++        return snackbar;
++    }
++
++    /**
++     * 长显示Snackbar，自定义颜色
++     * @param view
++     * @param message
++     * @param messageColor
++     * @param backgroundColor
++     * @return
++     */
++    public static Snackbar LongSnackbar(View view, String message, int messageColor, int backgroundColor){
++        Snackbar snackbar = Snackbar.make(view,message, Snackbar.LENGTH_LONG);
++        setSnackbarColor(snackbar,messageColor,backgroundColor);
++        return snackbar;
++    }
++
++    /**
++     * 自定义时常显示Snackbar，自定义颜色
++     * @param view
++     * @param message
++     * @param messageColor
++     * @param backgroundColor
++     * @return
++     */
++    public static Snackbar IndefiniteSnackbar(View view, String message, int duration, int messageColor, int backgroundColor){
++        Snackbar snackbar = Snackbar.make(view,message, Snackbar.LENGTH_INDEFINITE).setDuration(duration);
++        setSnackbarColor(snackbar,messageColor,backgroundColor);
++        return snackbar;
++    }
++
++    /**
++     * 短显示Snackbar，可选预设类型
++     * @param view
++     * @param message
++     * @param type
++     * @return
++     */
++    public static Snackbar ShortSnackbar(View view, String message, int type){
++        Snackbar snackbar = Snackbar.make(view,message, Snackbar.LENGTH_SHORT);
++        switchType(snackbar,type);
++        return snackbar;
++    }
++
++    /**
++     * 长显示Snackbar，可选预设类型
++     * @param view
++     * @param message
++     * @param type
++     * @return
++     */
++    public static Snackbar LongSnackbar(View view, String message, int type){
++        Snackbar snackbar = Snackbar.make(view,message, Snackbar.LENGTH_LONG);
++        switchType(snackbar,type);
++        return snackbar;
++    }
++
++    /**
++     * 自定义时常显示Snackbar，可选预设类型
++     * @param view
++     * @param message
++     * @param type
++     * @return
++     */
++    public static Snackbar IndefiniteSnackbar(View view, String message, int duration, int type){
++        Snackbar snackbar = Snackbar.make(view,message, Snackbar.LENGTH_INDEFINITE).setDuration(duration);
++        switchType(snackbar,type);
++        return snackbar;
++    }
++
++    //选择预设类型
++    private static void switchType(Snackbar snackbar, int type){
++        switch (type){
++            case Info:
++                setSnackbarColor(snackbar,blue);
++                break;
++            case Confirm:
++                setSnackbarColor(snackbar,green);
++                break;
++            case Warning:
++                setSnackbarColor(snackbar,orange);
++                break;
++            case Alert:
++                setSnackbarColor(snackbar, Color.YELLOW,red);
++                break;
++        }
++    }
++
++    /**
++     * 设置Snackbar背景颜色
++     * @param snackbar
++     * @param backgroundColor
++     */
++    public static void setSnackbarColor(Snackbar snackbar, int backgroundColor) {
++        View view = snackbar.getView();
++        if(view!=null){
++            view.setBackgroundColor(backgroundColor);
++        }
++    }
++
++    /**
++     * 设置Snackbar文字和背景颜色
++     * @param snackbar
++     * @param messageColor
++     * @param backgroundColor
++     */
++    public static void setSnackbarColor(Snackbar snackbar, int messageColor, int backgroundColor) {
++        View view = snackbar.getView();
++        if(view!=null){
++            view.setBackgroundColor(backgroundColor);
++            ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(messageColor);
++        }
++    }
++
++    /**
++     * 向Snackbar中添加view
++     * @param snackbar
++     * @param layoutId
++     * @param index 新加布局在Snackbar中的位置
++     */
++    public static void SnackbarAddView(Snackbar snackbar, int layoutId, int index) {
++        View snackbarview = snackbar.getView();
++        Snackbar.SnackbarLayout snackbarLayout=(Snackbar.SnackbarLayout)snackbarview;
++
++        View add_view = LayoutInflater.from(snackbarview.getContext()).inflate(layoutId,null);
++
++        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
++        p.gravity= Gravity.CENTER_VERTICAL;
++
++        snackbarLayout.addView(add_view,index,p);
++    }
++}
+Index: app/src/main/res/layout/line_meizi_item2.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/line_meizi_item2.xml	(revision )
++++ app/src/main/res/layout/line_meizi_item2.xml	(revision )
+@@ -0,0 +1,44 @@
++<?xml version="1.0" encoding="utf-8"?>
++<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="150dp"
++    android:layout_marginTop="10dp"
++    android:scrollbars="none"
++    android:background="#ffffff"
++    >
++    <LinearLayout
++        android:layout_width="wrap_content"
++        android:layout_height="match_parent">
++        <LinearLayout
++            android:id="@+id/ll"
++            android:layout_width="wrap_content"
++            android:layout_height="match_parent"
++            android:background="?android:attr/selectableItemBackground">
++            <ImageView
++                android:id="@+id/line_item_iv"
++                android:layout_width="wrap_content"
++                android:layout_height="match_parent"
++                android:layout_margin="5dp"
++                android:adjustViewBounds="true"
++                android:scaleType="centerCrop"
++                />
++            <TextView
++                android:id="@+id/line_item_tv"
++                android:layout_width="0dp"
++                android:layout_height="match_parent"
++                android:layout_weight="1"
++                android:gravity="center"/>
++        </LinearLayout>
++        <TextView
++            android:id="@+id/line_item_remove"
++            android:background="#f84d4d"
++            android:layout_width="80dp"
++            android:layout_height="match_parent"
++            android:layout_margin="10dp"
++            android:gravity="center"
++            android:textColor="#ffffff"
++            android:text="删除本item"/>
++    </LinearLayout>
++
++
++</HorizontalScrollView>
+Index: app/src/main/res/layout/grid_meizi_item.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/grid_meizi_item.xml	(revision )
++++ app/src/main/res/layout/grid_meizi_item.xml	(revision )
+@@ -0,0 +1,11 @@
++<ImageButton xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/iv"
++    android:layout_margin="5dp"
++    android:layout_width="match_parent"
++    android:layout_height="wrap_content"
++    android:minHeight="200dp"
++    android:adjustViewBounds="true"
++    android:scaleType="centerCrop"
++    android:background="#ffffff"
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    tools:targetApi="lollipop" />
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_main.xml	(revision )
++++ app/src/main/res/layout/activity_main.xml	(revision )
+@@ -0,0 +1,39 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:paddingBottom="@dimen/activity_vertical_margin"
++    android:paddingLeft="@dimen/activity_horizontal_margin"
++    android:paddingRight="@dimen/activity_horizontal_margin"
++    android:paddingTop="@dimen/activity_vertical_margin"
++    android:orientation="vertical"
++    android:gravity="center">
++
++    <Button
++        android:id="@+id/line"
++        android:layout_margin="20dp"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="线性布局" />
++    <Button
++        android:id="@+id/line2"
++        android:layout_margin="20dp"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="滑动显示隐藏布局" />
++
++    <Button
++        android:id="@+id/grid"
++        android:layout_margin="30dp"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="网格布局" />
++
++    <Button
++        android:id="@+id/staggered"
++        android:layout_margin="30dp"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="交错网格布局" />
++</LinearLayout>
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/modules.xml	(revision )
++++ .idea/modules.xml	(revision )
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/RecyclerViewDemo.iml" filepath="$PROJECT_DIR$/RecyclerViewDemo.iml" />
++      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- build.gradle	(revision )
++++ build.gradle	(revision )
+@@ -0,0 +1,23 @@
++// Top-level build file where you can add configuration options common to all sub-projects/modules.
++
++buildscript {
++    repositories {
++        jcenter()
++    }
++    dependencies {
++        classpath 'com.android.tools.build:gradle:2.3.3'
++
++        // NOTE: Do not place your application dependencies here; they belong
++        // in the individual module build.gradle files
++    }
++}
++
++allprojects {
++    repositories {
++        jcenter()
++    }
++}
++
++task clean(type: Delete) {
++    delete rootProject.buildDir
++}
+Index: app/src/main/res/layout/activity_staggerde.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_staggerde.xml	(revision )
++++ app/src/main/res/layout/activity_staggerde.xml	(revision )
+@@ -0,0 +1,36 @@
++<?xml version="1.0" encoding="utf-8"?>
++<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/staggered_coordinatorLayout"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:fitsSystemWindows="true"
++    android:background="#ffffff"
++>
++
++    <android.support.design.widget.AppBarLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:theme="@style/AppTheme.AppBarOverlay">
++
++        <android.support.v7.widget.Toolbar
++            android:id="@+id/toolbar"
++            android:layout_width="match_parent"
++            android:layout_height="?attr/actionBarSize"
++            android:background="?attr/colorPrimary" />
++
++    </android.support.design.widget.AppBarLayout>
++    <android.support.v4.widget.SwipeRefreshLayout
++        android:id="@+id/staggered_swipe_refresh"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        app:layout_behavior="@string/appbar_scrolling_view_behavior">
++        <android.support.v7.widget.RecyclerView
++            android:id="@+id/staggered_recycler"
++            android:layout_width="match_parent"
++            android:layout_height="match_parent"
++            />
++    </android.support.v4.widget.SwipeRefreshLayout>
++
++</android.support.design.widget.CoordinatorLayout>
+Index: app/src/main/java/com/example/zcp/recyclerviewdemo/LineActivity2.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/zcp/recyclerviewdemo/LineActivity2.java	(revision )
++++ app/src/main/java/com/example/zcp/recyclerviewdemo/LineActivity2.java	(revision )
+@@ -0,0 +1,321 @@
++package com.example.zcp.recyclerviewdemo;
++
++import android.content.Context;
++import android.graphics.Canvas;
++import android.graphics.Color;
++import android.os.AsyncTask;
++import android.os.Build;
++import android.os.Bundle;
++import android.support.design.widget.CoordinatorLayout;
++import android.support.v4.widget.SwipeRefreshLayout;
++import android.support.v7.app.AppCompatActivity;
++import android.support.v7.widget.LinearLayoutManager;
++import android.support.v7.widget.RecyclerView;
++import android.support.v7.widget.StaggeredGridLayoutManager;
++import android.support.v7.widget.Toolbar;
++import android.support.v7.widget.helper.ItemTouchHelper;
++import android.text.TextUtils;
++import android.util.DisplayMetrics;
++import android.util.TypedValue;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.view.WindowManager;
++import android.widget.HorizontalScrollView;
++import android.widget.ImageView;
++import android.widget.LinearLayout;
++import android.widget.TextView;
++
++import com.google.gson.Gson;
++import com.google.gson.reflect.TypeToken;
++import com.squareup.picasso.Picasso;
++
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.util.Collections;
++import java.util.List;
++
++
++//滑动显示隐藏布局示例
++public class LineActivity2 extends AppCompatActivity {
++
++    private static RecyclerView recyclerview;
++    private CoordinatorLayout coordinatorLayout;
++    private MyAdapter mAdapter;
++    private List<Meizi> meizis;
++    private LinearLayoutManager mLayoutManager;
++    private int lastVisibleItem ;
++    private int page=1;
++    private ItemTouchHelper itemTouchHelper;
++    private int screenwidth;
++    private boolean remove;
++    private SwipeRefreshLayout swipeRefreshLayout;
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(R.layout.activity_line);
++        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
++        setSupportActionBar(toolbar);
++
++        initView();
++        setListener();
++
++        new GetData().execute("http://gank.io/api/data/福利/10/1");
++
++    }
++
++    private void initView(){
++        coordinatorLayout=(CoordinatorLayout)findViewById(R.id.line_coordinatorLayout);
++        recyclerview=(RecyclerView)findViewById(R.id.line_recycler);
++        mLayoutManager=new LinearLayoutManager(this);
++        recyclerview.setLayoutManager(mLayoutManager);
++
++        swipeRefreshLayout=(SwipeRefreshLayout) findViewById(R.id.line_swipe_refresh) ;
++        swipeRefreshLayout.setProgressViewOffset(false, 0,  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
++
++    }
++
++    private void setListener(){
++        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
++            @Override
++            public void onRefresh() {
++                page=1;
++                new GetData().execute("http://gank.io/api/data/福利/10/1");
++            }
++        });
++
++        itemTouchHelper=new ItemTouchHelper(new ItemTouchHelper.Callback() {
++            @Override
++            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
++                int dragFlags=0,swipeFlags=0;
++                if(recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager){
++                    dragFlags=ItemTouchHelper.UP|ItemTouchHelper.DOWN|ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT;
++                }else if(recyclerView.getLayoutManager() instanceof LinearLayoutManager){
++                    dragFlags=ItemTouchHelper.UP|ItemTouchHelper.DOWN;
++                    //设置侧滑方向为从左到右和从右到左都可以
++                    swipeFlags = ItemTouchHelper.LEFT;
++                }
++                return makeMovementFlags(dragFlags,swipeFlags);
++            }
++
++            @Override
++            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
++                int from=viewHolder.getAdapterPosition();
++                int to=target.getAdapterPosition();
++                Collections.swap(meizis,from,to);
++                mAdapter.notifyItemMoved(from,to);
++                return true;
++            }
++
++            @Override
++            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
++
++                mAdapter.removeItem(viewHolder.getAdapterPosition());
++            }
++
++            @Override
++            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
++                super.onSelectedChanged(viewHolder, actionState);
++                if(actionState==ItemTouchHelper.ACTION_STATE_DRAG){
++                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
++                        viewHolder.itemView.setElevation(100);
++                    }
++                }
++            }
++
++            @Override
++            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
++                super.clearView(recyclerView, viewHolder);
++
++                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
++                    viewHolder.itemView.setElevation(0);
++                }
++
++            }
++
++            @Override
++            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
++
++                viewHolder.itemView.scrollTo(-(int)dX,-(int)dY);//根据item的滑动偏移修改HorizontalScrollView的滚动
++                if(Math.abs(dX)>screenwidth/5&&!remove&&isCurrentlyActive){
++                    //用户收滑动item超过屏幕5分之1，标记为要删除
++                    remove=true;
++                }else if(Math.abs(dX)<screenwidth/5&&remove&&!isCurrentlyActive){
++                    //用户收滑动item没有超过屏幕5分之1，标记为不删除
++                    remove=false;
++                }
++                if(actionState==ItemTouchHelper.ACTION_STATE_SWIPE&&remove==true&&!isCurrentlyActive){
++                    //当用户滑动tem超过屏幕5分之1，并且松手时，执行删除item
++                    if(viewHolder!=null&&viewHolder.getAdapterPosition()>=0){
++                        mAdapter.removeItem(viewHolder.getAdapterPosition());
++                        remove=false;
++                    }
++                }
++                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
++            }
++        });
++
++        recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
++            @Override
++            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
++                super.onScrollStateChanged(recyclerView, newState);
++//                0：当前屏幕停止滚动；1时：屏幕在滚动 且 用户仍在触碰或手指还在屏幕上；2时：随用户的操作，屏幕上产生的惯性滑动；
++
++                if (newState == RecyclerView.SCROLL_STATE_IDLE
++                        && lastVisibleItem +2>=mLayoutManager.getItemCount()) {
++                    new GetData().execute("http://gank.io/api/data/福利/10/"+(++page));
++                }
++            }
++
++            @Override
++            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
++                super.onScrolled(recyclerView, dx, dy);
++                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
++
++            }
++
++        });
++    }
++
++    private class GetData extends AsyncTask<String, Integer, String> {
++
++        @Override
++        protected void onPreExecute() {
++            super.onPreExecute();
++
++            swipeRefreshLayout.setRefreshing(true);
++        }
++
++        @Override
++        protected String doInBackground(String... params) {
++
++            return MyOkhttp.get(params[0]);
++        }
++
++        protected void onPostExecute(String result) {
++            super.onPostExecute(result);
++            if(!TextUtils.isEmpty(result)){
++
++                JSONObject jsonObject;
++                Gson gson=new Gson();
++                String jsonData=null;
++
++                try {
++                    jsonObject = new JSONObject(result);
++                    jsonData = jsonObject.getString("results");
++                } catch (JSONException e) {
++                    e.printStackTrace();
++                }
++                if(meizis==null||meizis.size()==0){
++                    meizis= gson.fromJson(jsonData, new TypeToken<List<Meizi>>() {}.getType());
++                    Meizi pages=new Meizi();
++                    pages.setPage(page);
++                    meizis.add(pages);
++                }else{
++                    List<Meizi> more= gson.fromJson(jsonData, new TypeToken<List<Meizi>>() {}.getType());
++                    meizis.addAll(more);
++                    Meizi pages=new Meizi();
++                    pages.setPage(page);
++                    meizis.add(pages);
++                }
++
++                if(mAdapter==null){
++                    recyclerview.setAdapter(mAdapter = new MyAdapter());
++                    itemTouchHelper.attachToRecyclerView(recyclerview);
++                }else{
++                    mAdapter.notifyDataSetChanged();
++                }
++            }
++            swipeRefreshLayout.setRefreshing(false);
++        }
++    }
++
++    class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
++
++
++
++        @Override
++        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
++        {
++                View view = LayoutInflater.from(
++                        LineActivity2.this).inflate(R.layout.line_meizi_item2, parent,
++                        false);
++                MyViewHolder holder = new MyViewHolder(view);
++
++            WindowManager wm = (WindowManager) LineActivity2.this
++                    .getSystemService(Context.WINDOW_SERVICE);
++            DisplayMetrics outMetrics = new DisplayMetrics();
++            wm.getDefaultDisplay().getMetrics(outMetrics);
++            screenwidth =outMetrics.widthPixels;
++                return holder;
++
++        }
++
++
++        @Override
++        public void onBindViewHolder(MyViewHolder holder, final int position) {
++            if(holder.itemView.getScrollX()!=0){
++                ((HorizontalScrollView)holder.itemView).fullScroll(View.FOCUS_UP);//如果item的HorizontalScrollView没在初始位置，则滚动回顶部
++            }
++            holder.ll.setMinimumWidth(screenwidth);//设置LinearLayout宽度为屏幕宽度
++            holder.tv.setText("图"+position);
++            Picasso.with(LineActivity2.this).load(meizis.get(position).getUrl()).into(holder.iv);
++
++            holder.ll.setOnClickListener(new View.OnClickListener() {
++                @Override
++                public void onClick(View v) {
++                    SnackbarUtil.ShortSnackbar(coordinatorLayout,"点击第"+position+"个",SnackbarUtil.Info).show();
++                }
++            });
++        }
++
++        @Override
++        public int getItemCount()
++        {
++            return meizis.size();
++        }
++
++        class MyViewHolder extends RecyclerView.ViewHolder
++        {
++            private ImageView iv;
++            private TextView tv;
++            private LinearLayout ll;
++            public MyViewHolder(View view)
++            {
++                super(view);
++                iv = (ImageView) view.findViewById(R.id.line_item_iv);
++                tv=(TextView) view.findViewById(R.id.line_item_tv);
++                ll=(LinearLayout) view.findViewById(R.id.ll);
++            }
++        }
++
++        public void addItem(Meizi meizi, int position) {
++            meizis.add(position, meizi);
++            notifyItemInserted(position);
++            recyclerview.scrollToPosition(position);
++        }
++
++        public void removeItem(final int position) {
++            final Meizi removed=meizis.get(position);
++            meizis.remove(position);
++            notifyItemRemoved(position);
++            SnackbarUtil.ShortSnackbar(coordinatorLayout,"你删除了第"+position+"个item",SnackbarUtil.Warning).setAction("撤销", new View.OnClickListener() {
++                @Override
++                public void onClick(View v) {
++                    addItem(removed,position);
++                    SnackbarUtil.ShortSnackbar(coordinatorLayout,"撤销了删除第"+position+"个item",SnackbarUtil.Confirm).show();
++                }
++            }).setActionTextColor(Color.WHITE).show();
++        }
++
++        public void removeItem(Meizi meizi) {
++            int position = meizis.indexOf(meizi);
++            meizis.remove(position);
++            notifyItemRemoved(position);
++        }
++
++    }
++
++}
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/compiler.xml	(revision )
++++ .idea/compiler.xml	(revision )
+@@ -0,0 +1,22 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CompilerConfiguration">
++    <resourceExtensions />
++    <wildcardResourcePatterns>
++      <entry name="!?*.java" />
++      <entry name="!?*.form" />
++      <entry name="!?*.class" />
++      <entry name="!?*.groovy" />
++      <entry name="!?*.scala" />
++      <entry name="!?*.flex" />
++      <entry name="!?*.kt" />
++      <entry name="!?*.clj" />
++      <entry name="!?*.aj" />
++    </wildcardResourcePatterns>
++    <annotationProcessing>
++      <profile default="true" name="Default" enabled="false">
++        <processorPath useClasspath="true" />
++      </profile>
++    </annotationProcessing>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision )
++++ .idea/misc.xml	(revision )
+@@ -0,0 +1,62 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="EntryPointsManager">
++    <entry_points version="2.0" />
++  </component>
++  <component name="NullableNotNullManager">
++    <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
++    <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />
++    <option name="myNullables">
++      <value>
++        <list size="4">
++          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
++          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
++          <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
++          <item index="3" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
++        </list>
++      </value>
++    </option>
++    <option name="myNotNulls">
++      <value>
++        <list size="4">
++          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
++          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
++          <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
++          <item index="3" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
++        </list>
++      </value>
++    </option>
++  </component>
++  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
++    <OptionsSetting value="true" id="Add" />
++    <OptionsSetting value="true" id="Remove" />
++    <OptionsSetting value="true" id="Checkout" />
++    <OptionsSetting value="true" id="Update" />
++    <OptionsSetting value="true" id="Status" />
++    <OptionsSetting value="true" id="Edit" />
++    <ConfirmationsSetting value="0" id="Add" />
++    <ConfirmationsSetting value="0" id="Remove" />
++  </component>
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++    <output url="file://$PROJECT_DIR$/build/classes" />
++  </component>
++  <component name="ProjectType">
++    <option name="id" value="Android" />
++  </component>
++  <component name="masterDetails">
++    <states>
++      <state key="ProjectJDKs.UI">
++        <settings>
++          <last-edited>1.7</last-edited>
++          <splitter-proportions>
++            <option name="proportions">
++              <list>
++                <option value="0.2" />
++              </list>
++            </option>
++          </splitter-proportions>
++        </settings>
++      </state>
++    </states>
++  </component>
++</project>
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision )
++++ app/build.gradle	(revision )
+@@ -0,0 +1,30 @@
++apply plugin: 'com.android.application'
++
++android {
++    compileSdkVersion 23
++    buildToolsVersion "25.0.0"
++    defaultConfig {
++        applicationId "com.example.zcp.recyclerviewdemo"
++        minSdkVersion 19
++        targetSdkVersion 23
++        versionCode 1
++        versionName "1.0"
++        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
++    }
++    buildTypes {
++        release {
++            minifyEnabled false
++            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
++        }
++    }
++}
++
++dependencies {
++    compile fileTree(dir: 'libs', include: ['*.jar'])
++    compile 'com.android.support:appcompat-v7:23.4.0'
++    testCompile 'junit:junit:4.12'
++    compile 'com.android.support:design:23.4.0'
++    compile 'com.google.code.gson:gson:2.2.4'
++    compile 'com.squareup.picasso:picasso:2.3.2'
++    compile files('libs/okhttp-3.2.0.jar')
++}
+Index: app/src/main/java/com/example/zcp/recyclerviewdemo/GridActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/zcp/recyclerviewdemo/GridActivity.java	(revision )
++++ app/src/main/java/com/example/zcp/recyclerviewdemo/GridActivity.java	(revision )
+@@ -0,0 +1,201 @@
++package com.example.zcp.recyclerviewdemo;
++
++import android.os.AsyncTask;
++import android.os.Bundle;
++import android.support.design.widget.CoordinatorLayout;
++import android.support.v4.widget.SwipeRefreshLayout;
++import android.support.v7.app.AppCompatActivity;
++import android.support.v7.widget.GridLayoutManager;
++import android.support.v7.widget.RecyclerView;
++import android.support.v7.widget.StaggeredGridLayoutManager;
++import android.support.v7.widget.Toolbar;
++import android.support.v7.widget.helper.ItemTouchHelper;
++import android.text.TextUtils;
++import android.util.TypedValue;
++import android.view.View;
++
++import com.google.gson.Gson;
++import com.google.gson.reflect.TypeToken;
++
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.util.Collections;
++import java.util.List;
++
++//网格布局示例
++public class GridActivity extends AppCompatActivity {
++
++    private static RecyclerView recyclerview;
++    private CoordinatorLayout coordinatorLayout;
++    private GridAdapter mAdapter;
++    private List<Meizi> meizis;
++    private GridLayoutManager mLayoutManager;
++    private int lastVisibleItem;
++    private int page=1;
++    private ItemTouchHelper itemTouchHelper;
++    private SwipeRefreshLayout swipeRefreshLayout;
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(R.layout.activity_grid);
++        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
++        setSupportActionBar(toolbar);
++
++        initView();
++        setListener();
++
++        new GetData().execute("http://gank.io/api/data/福利/10/1");
++
++    }
++
++    private void initView(){
++        coordinatorLayout=(CoordinatorLayout)findViewById(R.id.grid_coordinatorLayout);
++
++        recyclerview=(RecyclerView)findViewById(R.id.grid_recycler);
++        mLayoutManager=new GridLayoutManager(GridActivity.this,3,GridLayoutManager.VERTICAL,false);
++        recyclerview.setLayoutManager(mLayoutManager);
++
++        swipeRefreshLayout=(SwipeRefreshLayout) findViewById(R.id.grid_swipe_refresh) ;
++        //调整SwipeRefreshLayout的位置
++        swipeRefreshLayout.setProgressViewOffset(false, 0,  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
++
++
++    }
++
++    private void setListener(){
++
++        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
++            @Override
++            public void onRefresh() {
++                page=1;
++                new GetData().execute("http://gank.io/api/data/福利/10/1");
++            }
++        });
++
++        itemTouchHelper=new ItemTouchHelper(new ItemTouchHelper.Callback() {
++            @Override
++            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
++                int dragFlags=0;
++                if(recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager||recyclerView.getLayoutManager() instanceof GridLayoutManager){
++                    dragFlags=ItemTouchHelper.UP|ItemTouchHelper.DOWN|ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT;
++                }
++                return makeMovementFlags(dragFlags,0);
++            }
++
++            @Override
++            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
++                int from=viewHolder.getAdapterPosition();
++                int to=target.getAdapterPosition();
++                Meizi moveItem=meizis.get(from);
++                meizis.remove(from);
++                meizis.add(to,moveItem);
++                mAdapter.notifyItemMoved(from,to);
++                return true;
++            }
++
++            @Override
++            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
++
++            }
++
++            @Override
++            public boolean isLongPressDragEnabled() {
++                return false;
++            }
++        });
++
++        //recyclerview滚动监听
++        recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
++            @Override
++            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
++                super.onScrollStateChanged(recyclerView, newState);
++                //0：当前屏幕停止滚动；1时：屏幕在滚动 且 用户仍在触碰或手指还在屏幕上；2时：随用户的操作，屏幕上产生的惯性滑动；
++                // 滑动状态停止并且剩余少于两个item时，自动加载下一页
++                if (newState == RecyclerView.SCROLL_STATE_IDLE
++                        && lastVisibleItem +2>=mLayoutManager.getItemCount()) {
++                    new GetData().execute("http://gank.io/api/data/福利/10/"+(++page));
++                }
++            }
++
++            @Override
++            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
++                super.onScrolled(recyclerView, dx, dy);
++//                获取加载的最后一个可见视图在适配器的位置。
++                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
++
++            }
++        });
++    }
++
++
++    private class GetData extends AsyncTask<String, Integer, String> {
++
++        @Override
++        protected void onPreExecute() {
++            super.onPreExecute();
++            //设置swipeRefreshLayout为刷新状态
++            swipeRefreshLayout.setRefreshing(true);
++        }
++
++        @Override
++        protected String doInBackground(String... params) {
++
++            return MyOkhttp.get(params[0]);
++        }
++
++        protected void onPostExecute(String result) {
++            super.onPostExecute(result);
++            if(!TextUtils.isEmpty(result)){
++
++                JSONObject jsonObject;
++                Gson gson=new Gson();
++                String jsonData=null;
++
++                try {
++                    jsonObject = new JSONObject(result);
++                    jsonData = jsonObject.getString("results");
++                } catch (JSONException e) {
++                    e.printStackTrace();
++                }
++                if(meizis==null||meizis.size()==0){
++                    meizis= gson.fromJson(jsonData, new TypeToken<List<Meizi>>() {}.getType());
++                    Meizi pages=new Meizi();
++                    pages.setPage(page);
++                    meizis.add(pages);
++                }else{
++                    List<Meizi> more= gson.fromJson(jsonData, new TypeToken<List<Meizi>>() {}.getType());
++                    meizis.addAll(more);
++                    Meizi pages=new Meizi();
++                    pages.setPage(page);
++                    meizis.add(pages);
++                }
++
++                if(mAdapter==null){
++                    recyclerview.setAdapter(mAdapter = new GridAdapter(GridActivity.this,meizis));
++
++                    mAdapter.setOnItemClickListener(new GridAdapter.OnRecyclerViewItemClickListener() {
++                        @Override
++                        public void onItemClick(View view) {
++                            int position=recyclerview.getChildAdapterPosition(view);
++                            SnackbarUtil.ShortSnackbar(coordinatorLayout,"点击第"+position+"个",SnackbarUtil.Info).show();
++                        }
++
++                        @Override
++                        public void onItemLongClick(View view) {
++                             itemTouchHelper.startDrag(recyclerview.getChildViewHolder(view));
++                        }
++                    });
++
++                    itemTouchHelper.attachToRecyclerView(recyclerview);
++                }else{
++                    mAdapter.notifyDataSetChanged();
++                }
++            }
++            //停止swipeRefreshLayout加载动画
++            swipeRefreshLayout.setRefreshing(false);
++        }
++    }
++
++}
+Index: .idea/runConfigurations.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/runConfigurations.xml	(revision )
++++ .idea/runConfigurations.xml	(revision )
+@@ -0,0 +1,12 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="RunConfigurationProducerService">
++    <option name="ignoredProducers">
++      <set>
++        <option value="org.jetbrains.plugins.gradle.execution.test.runner.AllInPackageGradleConfigurationProducer" />
++        <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer" />
++        <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer" />
++      </set>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .gitignore	(revision )
++++ .gitignore	(revision )
+@@ -0,0 +1,8 @@
++*.iml
++.gradle
++/local.properties
++/.idea/workspace.xml
++/.idea/libraries
++.DS_Store
++/build
++/captures
+Index: app/src/main/java/com/example/zcp/recyclerviewdemo/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/zcp/recyclerviewdemo/MainActivity.java	(revision )
++++ app/src/main/java/com/example/zcp/recyclerviewdemo/MainActivity.java	(revision )
+@@ -0,0 +1,49 @@
++package com.example.zcp.recyclerviewdemo;
++
++import android.content.Intent;
++import android.os.Bundle;
++import android.support.v7.app.AppCompatActivity;
++import android.view.View;
++
++public class MainActivity extends AppCompatActivity {
++
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(R.layout.activity_main);
++
++        findViewById(R.id.line).setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                Intent intent = new Intent(MainActivity.this, LineActivity.class);
++                startActivity(intent);
++            }
++        });
++        findViewById(R.id.line2).setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                Intent intent = new Intent(MainActivity.this, LineActivity2.class);
++                startActivity(intent);
++            }
++        });
++
++        findViewById(R.id.grid).setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                Intent intent = new Intent(MainActivity.this, GridActivity.class);
++                startActivity(intent);
++            }
++        });
++
++        findViewById(R.id.staggered).setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                Intent intent = new Intent(MainActivity.this, StaggeredActivity.class);
++                startActivity(intent);
++            }
++        });
++
++
++    }
++}
+Index: app/src/main/res/layout/activity_grid.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_grid.xml	(revision )
++++ app/src/main/res/layout/activity_grid.xml	(revision )
+@@ -0,0 +1,40 @@
++<?xml version="1.0" encoding="utf-8"?>
++<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/grid_coordinatorLayout"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:fitsSystemWindows="true"
++    android:background="#ffffff"
++ >
++<!--工具栏-->
++    <android.support.design.widget.AppBarLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:theme="@style/AppTheme.AppBarOverlay">
++
++        <android.support.v7.widget.Toolbar
++            android:id="@+id/toolbar"
++            android:layout_width="match_parent"
++            android:layout_height="?attr/actionBarSize"
++            android:background="?attr/colorPrimary"
++            />
++
++    </android.support.design.widget.AppBarLayout>
++    <!--下拉刷新控件-->
++    <android.support.v4.widget.SwipeRefreshLayout
++        android:id="@+id/grid_swipe_refresh"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        app:layout_behavior="@string/appbar_scrolling_view_behavior"
++        >
++        <android.support.v7.widget.RecyclerView
++            android:id="@+id/grid_recycler"
++            android:layout_width="match_parent"
++            android:layout_height="match_parent"
++            />
++    </android.support.v4.widget.SwipeRefreshLayout>
++
++
++</android.support.design.widget.CoordinatorLayout>
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>GBK
+===================================================================
+--- gradle/wrapper/gradle-wrapper.properties	(revision )
++++ gradle/wrapper/gradle-wrapper.properties	(revision )
+@@ -0,0 +1,6 @@
++#Thu Oct 12 09:43:15 CST 2017
++distributionBase=GRADLE_USER_HOME
++distributionPath=wrapper/dists
++zipStoreBase=GRADLE_USER_HOME
++zipStorePath=wrapper/dists
++distributionUrl=https\://services.gradle.org/distributions/gradle-3.3-all.zip
+Index: gradlew.bat
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- gradlew.bat	(revision )
++++ gradlew.bat	(revision )
+@@ -0,0 +1,90 @@
++@if "%DEBUG%" == "" @echo off
++@rem ##########################################################################
++@rem
++@rem  Gradle startup script for Windows
++@rem
++@rem ##########################################################################
++
++@rem Set local scope for the variables with windows NT shell
++if "%OS%"=="Windows_NT" setlocal
++
++@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
++set DEFAULT_JVM_OPTS=
++
++set DIRNAME=%~dp0
++if "%DIRNAME%" == "" set DIRNAME=.
++set APP_BASE_NAME=%~n0
++set APP_HOME=%DIRNAME%
++
++@rem Find java.exe
++if defined JAVA_HOME goto findJavaFromJavaHome
++
++set JAVA_EXE=java.exe
++%JAVA_EXE% -version >NUL 2>&1
++if "%ERRORLEVEL%" == "0" goto init
++
++echo.
++echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++echo.
++echo Please set the JAVA_HOME variable in your environment to match the
++echo location of your Java installation.
++
++goto fail
++
++:findJavaFromJavaHome
++set JAVA_HOME=%JAVA_HOME:"=%
++set JAVA_EXE=%JAVA_HOME%/bin/java.exe
++
++if exist "%JAVA_EXE%" goto init
++
++echo.
++echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
++echo.
++echo Please set the JAVA_HOME variable in your environment to match the
++echo location of your Java installation.
++
++goto fail
++
++:init
++@rem Get command-line arguments, handling Windowz variants
++
++if not "%OS%" == "Windows_NT" goto win9xME_args
++if "%@eval[2+2]" == "4" goto 4NT_args
++
++:win9xME_args
++@rem Slurp the command line arguments.
++set CMD_LINE_ARGS=
++set _SKIP=2
++
++:win9xME_args_slurp
++if "x%~1" == "x" goto execute
++
++set CMD_LINE_ARGS=%*
++goto execute
++
++:4NT_args
++@rem Get arguments from the 4NT Shell from JP Software
++set CMD_LINE_ARGS=%$
++
++:execute
++@rem Setup the command line
++
++set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
++
++@rem Execute Gradle
++"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %CMD_LINE_ARGS%
++
++:end
++@rem End local scope for the variables with windows NT shell
++if "%ERRORLEVEL%"=="0" goto mainEnd
++
++:fail
++rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
++rem the _cmd.exe /c_ return code!
++if  not "" == "%GRADLE_EXIT_CONSOLE%" exit 1
++exit /b 1
++
++:mainEnd
++if "%OS%"=="Windows_NT" endlocal
++
++:omega
+Index: app/src/main/java/com/example/zcp/recyclerviewdemo/GridAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/zcp/recyclerviewdemo/GridAdapter.java	(revision )
++++ app/src/main/java/com/example/zcp/recyclerviewdemo/GridAdapter.java	(revision )
+@@ -0,0 +1,131 @@
++package com.example.zcp.recyclerviewdemo;
++
++import android.content.Context;
++import android.support.v7.widget.RecyclerView;
++import android.text.TextUtils;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.ImageButton;
++import android.widget.TextView;
++
++import com.squareup.picasso.Picasso;
++
++import java.util.List;
++
++/**
++ * Created by 赵晨璞 on 2016/6/19.
++ *
++ */
++
++public  class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener, View.OnLongClickListener {
++
++    private Context mContext;
++    private List<Meizi> datas;
++
++    public static interface OnRecyclerViewItemClickListener {
++        void onItemClick(View view);
++        void onItemLongClick(View view);
++    }
++
++    private OnRecyclerViewItemClickListener mOnItemClickListener = null;
++
++    public void setOnItemClickListener(OnRecyclerViewItemClickListener listener) {
++        mOnItemClickListener = listener;
++    }
++
++
++    public GridAdapter(Context context, List<Meizi> datas) {
++        mContext=context;
++        this.datas=datas;
++    }
++
++    @Override
++    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
++    {
++        if(viewType==0){
++            View view = LayoutInflater.from(mContext
++                    ).inflate(R.layout.grid_meizi_item, parent,
++                    false);
++            MyViewHolder holder = new MyViewHolder(view);
++
++            view.setOnClickListener(this);
++            view.setOnLongClickListener(this);
++
++            return holder;
++        }else{
++            MyViewHolder2 holder2=new MyViewHolder2(LayoutInflater.from(
++                    mContext).inflate(R.layout.page_item, parent,
++                    false));
++            return holder2;
++        }
++
++    }
++
++    @Override
++    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
++        if(holder instanceof MyViewHolder){
++            Picasso.with(mContext).load(datas.get(position).getUrl()).into(((MyViewHolder) holder).iv);
++        }else if(holder instanceof MyViewHolder2){
++            ((MyViewHolder2) holder).tv.setText(datas.get(position).getPage()+"页");
++        }
++
++    }
++
++    @Override
++    public int getItemCount()
++    {
++        return datas.size();
++    }
++
++    @Override
++    public int getItemViewType(int position) {
++
++        //判断item是图还是显示页数（图片有URL）
++        if (!TextUtils.isEmpty(datas.get(position).getUrl())) {
++            return 0;
++        } else {
++            return 1;
++        }
++    }
++
++    @Override
++    public void onClick(View v) {
++        if (mOnItemClickListener != null) {
++
++            mOnItemClickListener.onItemClick(v);
++        }
++
++    }
++
++
++    @Override
++    public boolean onLongClick(View v) {
++        if (mOnItemClickListener != null) {
++            mOnItemClickListener.onItemLongClick(v);
++        }
++        return false;
++    }
++
++    class MyViewHolder extends RecyclerView.ViewHolder
++    {
++        private ImageButton iv;
++
++        public MyViewHolder(View view)
++        {
++            super(view);
++            iv = (ImageButton) view.findViewById(R.id.iv);
++        }
++    }
++    class MyViewHolder2 extends RecyclerView.ViewHolder
++    {
++        private TextView tv;
++
++        public MyViewHolder2(View view)
++        {
++            super(view);
++            tv = (TextView) view.findViewById(R.id.tv);
++        }
++    }
++
++}
+Index: app/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/.gitignore	(revision )
++++ app/.gitignore	(revision )
+@@ -0,0 +1,1 @@
++/build
+Index: app/src/test/java/com/example/zcp/recyclerviewdemo/ExampleUnitTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/com/example/zcp/recyclerviewdemo/ExampleUnitTest.java	(revision )
++++ app/src/test/java/com/example/zcp/recyclerviewdemo/ExampleUnitTest.java	(revision )
+@@ -0,0 +1,17 @@
++package com.example.zcp.recyclerviewdemo;
++
++import org.junit.Test;
++
++import static org.junit.Assert.*;
++
++/**
++ * Example local unit test, which will execute on the development machine (host).
++ *
++ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
++ */
++public class ExampleUnitTest {
++    @Test
++    public void addition_isCorrect() throws Exception {
++        assertEquals(4, 2 + 2);
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/zcp/recyclerviewdemo/StaggeredActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/zcp/recyclerviewdemo/StaggeredActivity.java	(revision )
++++ app/src/main/java/com/example/zcp/recyclerviewdemo/StaggeredActivity.java	(revision )
+@@ -0,0 +1,192 @@
++package com.example.zcp.recyclerviewdemo;
++
++import android.os.AsyncTask;
++import android.os.Bundle;
++import android.support.design.widget.CoordinatorLayout;
++import android.support.v4.widget.SwipeRefreshLayout;
++import android.support.v7.app.AppCompatActivity;
++import android.support.v7.widget.RecyclerView;
++import android.support.v7.widget.StaggeredGridLayoutManager;
++import android.support.v7.widget.Toolbar;
++import android.support.v7.widget.helper.ItemTouchHelper;
++import android.text.TextUtils;
++import android.util.TypedValue;
++import android.view.View;
++
++import com.google.gson.Gson;
++import com.google.gson.reflect.TypeToken;
++
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.util.Collections;
++import java.util.List;
++
++public class StaggeredActivity extends AppCompatActivity {
++
++    private static RecyclerView recyclerview;
++    private CoordinatorLayout coordinatorLayout;
++    private GridAdapter mAdapter;
++    private List<Meizi> meizis;
++    private StaggeredGridLayoutManager mLayoutManager;
++    private int lastVisibleItem ;
++    private int page=1;
++    private ItemTouchHelper itemTouchHelper;
++    private SwipeRefreshLayout swipeRefreshLayout;
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(R.layout.activity_staggerde);
++        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
++        setSupportActionBar(toolbar);
++
++        initView();
++        setListener();
++
++        new GetData().execute("http://gank.io/api/data/福利/10/1");
++
++    }
++
++    private void initView(){
++        coordinatorLayout=(CoordinatorLayout)findViewById(R.id.staggered_coordinatorLayout);
++
++        recyclerview=(RecyclerView)findViewById(R.id.staggered_recycler);
++        mLayoutManager=new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
++        recyclerview.setLayoutManager(mLayoutManager);
++
++        swipeRefreshLayout=(SwipeRefreshLayout) findViewById(R.id.staggered_swipe_refresh) ;
++        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,R.color.colorPrimaryDark,R.color.colorAccent);
++        swipeRefreshLayout.setProgressViewOffset(false, 0,  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
++
++    }
++
++    private void setListener(){
++        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
++            @Override
++            public void onRefresh() {
++                page=1;
++                new GetData().execute("http://gank.io/api/data/福利/10/1");
++            }
++        });
++
++        itemTouchHelper=new ItemTouchHelper(new ItemTouchHelper.Callback() {
++            @Override
++            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
++                int dragFlags=0;
++                if(recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager){
++                    dragFlags=ItemTouchHelper.UP|ItemTouchHelper.DOWN|ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT;
++                }
++                return makeMovementFlags(dragFlags,0);
++            }
++
++            @Override
++            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
++                int from=viewHolder.getAdapterPosition();
++                int to=target.getAdapterPosition();
++                Meizi moveItem=meizis.get(from);
++                meizis.remove(from);
++                meizis.add(to,moveItem);
++                mAdapter.notifyItemMoved(from,to);
++                return true;
++            }
++
++            @Override
++            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
++
++            }
++
++            @Override
++            public boolean isLongPressDragEnabled() {
++                return false;
++            }
++        });
++
++        recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
++            @Override
++            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
++                super.onScrollStateChanged(recyclerView, newState);
++//                0：当前屏幕停止滚动；1时：屏幕在滚动 且 用户仍在触碰或手指还在屏幕上；2时：随用户的操作，屏幕上产生的惯性滑动；
++                if (newState == RecyclerView.SCROLL_STATE_IDLE
++                        && lastVisibleItem +2>=mLayoutManager.getItemCount()) {
++                    new GetData().execute("http://gank.io/api/data/福利/10/"+(++page));
++                }
++            }
++
++            @Override
++            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
++                super.onScrolled(recyclerView, dx, dy);
++                int[] positions= mLayoutManager.findLastVisibleItemPositions(null);
++                lastVisibleItem = Math.max(positions[0],positions[1]);
++            }
++        });
++    }
++
++    private class GetData extends AsyncTask<String, Integer, String> {
++        @Override
++        protected void onPreExecute() {
++            super.onPreExecute();
++
++            swipeRefreshLayout.setRefreshing(true);
++        }
++
++        @Override
++        protected String doInBackground(String... params) {
++
++            return MyOkhttp.get(params[0]);
++        }
++
++        protected void onPostExecute(String result) {
++            super.onPostExecute(result);
++            if(!TextUtils.isEmpty(result)){
++
++                JSONObject jsonObject;
++                Gson gson=new Gson();
++                String jsonData=null;
++
++                try {
++                    jsonObject = new JSONObject(result);
++                    jsonData = jsonObject.getString("results");
++                } catch (JSONException e) {
++                    e.printStackTrace();
++                }
++                if(meizis==null||meizis.size()==0){
++                    meizis= gson.fromJson(jsonData, new TypeToken<List<Meizi>>() {}.getType());
++                    Meizi pages=new Meizi();
++                    pages.setPage(page);
++                    meizis.add(pages);
++                }else{
++                    List<Meizi> more= gson.fromJson(jsonData, new TypeToken<List<Meizi>>() {}.getType());
++                    meizis.addAll(more);
++                    Meizi pages=new Meizi();
++                    pages.setPage(page);
++                    meizis.add(pages);
++                }
++
++                if(mAdapter==null){
++                    recyclerview.setAdapter(mAdapter = new GridAdapter(StaggeredActivity.this,meizis));
++
++                    //设置点击监听
++                    mAdapter.setOnItemClickListener(new GridAdapter.OnRecyclerViewItemClickListener() {
++                        @Override
++                        public void onItemClick(View view) {
++                            int position=recyclerview.getChildAdapterPosition(view);
++                            SnackbarUtil.ShortSnackbar(coordinatorLayout,"点击第"+position+"个",SnackbarUtil.Info).show();
++                        }
++
++                        @Override
++                        public void onItemLongClick(View view) {
++                            itemTouchHelper.startDrag(recyclerview.getChildViewHolder(view));
++                        }
++                    });
++
++                    itemTouchHelper.attachToRecyclerView(recyclerview);
++                }else{
++                    mAdapter.notifyDataSetChanged();
++                }
++            }
++            swipeRefreshLayout.setRefreshing(false);
++        }
++    }
++
++}
+Index: app/src/main/res/values/styles.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/styles.xml	(revision )
++++ app/src/main/res/values/styles.xml	(revision )
+@@ -0,0 +1,20 @@
++<resources>
++
++    <!-- Base application theme. -->
++    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
++        <!-- Customize your theme here. -->
++        <item name="colorPrimary">@color/colorPrimary</item>
++        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
++        <item name="colorAccent">@color/colorAccent</item>
++    </style>
++
++    <style name="AppTheme.NoActionBar">
++        <item name="windowActionBar">false</item>
++        <item name="windowNoTitle">true</item>
++    </style>
++
++    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
++
++    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
++
++</resources>
+Index: gradle.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>GBK
+===================================================================
+--- gradle.properties	(revision )
++++ gradle.properties	(revision )
+@@ -0,0 +1,17 @@
++# Project-wide Gradle settings.
++
++# IDE (e.g. Android Studio) users:
++# Gradle settings configured through the IDE *will override*
++# any settings specified in this file.
++
++# For more details on how to configure your build environment visit
++# http://www.gradle.org/docs/current/userguide/build_environment.html
++
++# Specifies the JVM arguments used for the daemon process.
++# The setting is particularly useful for tweaking memory settings.
++org.gradle.jvmargs=-Xmx1536m
++
++# When configured, Gradle will run in incubating parallel mode.
++# This option should only be used with decoupled projects. More details, visit
++# http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
++# org.gradle.parallel=true
+Index: settings.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- settings.gradle	(revision )
++++ settings.gradle	(revision )
+@@ -0,0 +1,1 @@
++include ':app'
+Index: app/src/main/res/layout/activity_line.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_line.xml	(revision )
++++ app/src/main/res/layout/activity_line.xml	(revision )
+@@ -0,0 +1,36 @@
++<?xml version="1.0" encoding="utf-8"?>
++<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/line_coordinatorLayout"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="#ffffff"
++    android:fitsSystemWindows="true">
++
++    <android.support.design.widget.AppBarLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:theme="@style/AppTheme.AppBarOverlay">
++
++        <android.support.v7.widget.Toolbar
++            android:id="@+id/toolbar"
++            android:layout_width="match_parent"
++            android:layout_height="?attr/actionBarSize"
++            android:background="?attr/colorPrimary" />
++
++    </android.support.design.widget.AppBarLayout>
++
++    <android.support.v4.widget.SwipeRefreshLayout
++        android:id="@+id/line_swipe_refresh"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        app:layout_behavior="@string/appbar_scrolling_view_behavior">
++
++        <android.support.v7.widget.RecyclerView
++            android:id="@+id/line_recycler"
++            android:layout_width="match_parent"
++            android:layout_height="match_parent" />
++    </android.support.v4.widget.SwipeRefreshLayout>
++
++</android.support.design.widget.CoordinatorLayout>
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/vcs.xml	(revision )
++++ .idea/vcs.xml	(revision )
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="Git" />
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/colors.xml	(revision )
++++ app/src/main/res/values/colors.xml	(revision )
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <color name="colorPrimary">#ffc107</color>
++    <color name="colorPrimaryDark">#ffa000</color>
++    <color name="colorAccent">#FF9800</color>
++</resources>
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision )
++++ app/src/main/AndroidManifest.xml	(revision )
+@@ -0,0 +1,39 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.example.zcp.recyclerviewdemo">
++
++    <uses-permission android:name="android.permission.INTERNET" />
++
++    <application
++        android:allowBackup="true"
++        android:icon="@mipmap/ic_launcher"
++        android:label="@string/app_name"
++        android:supportsRtl="true"
++        android:theme="@style/AppTheme">
++        <activity android:name=".MainActivity">
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++
++                <category android:name="android.intent.category.LAUNCHER" />
++            </intent-filter>
++        </activity>
++        <activity
++            android:name=".LineActivity"
++            android:label="@string/title_activity_line"
++            android:theme="@style/AppTheme.NoActionBar" />
++        <activity
++            android:name=".LineActivity2"
++            android:label="滑动显示隐藏布局"
++            android:theme="@style/AppTheme.NoActionBar" />
++        <activity
++            android:name=".GridActivity"
++            android:label="@string/title_activity_grid"
++            android:theme="@style/AppTheme.NoActionBar" />
++        <activity
++            android:name=".StaggeredActivity"
++            android:label="@string/title_activity_staggerde"
++            android:theme="@style/AppTheme.NoActionBar"></activity>
++
++    </application>
++
++</manifest>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/gradle.xml	(revision )
++++ .idea/gradle.xml	(revision )
+@@ -0,0 +1,18 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="GradleSettings">
++    <option name="linkedExternalProjectsSettings">
++      <GradleProjectSettings>
++        <option name="distributionType" value="DEFAULT_WRAPPED" />
++        <option name="externalProjectPath" value="$PROJECT_DIR$" />
++        <option name="modules">
++          <set>
++            <option value="$PROJECT_DIR$" />
++            <option value="$PROJECT_DIR$/app" />
++          </set>
++        </option>
++        <option name="resolveModulePerSourceSet" value="false" />
++      </GradleProjectSettings>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: app/src/main/java/com/example/zcp/recyclerviewdemo/Meizi.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/zcp/recyclerviewdemo/Meizi.java	(revision )
++++ app/src/main/java/com/example/zcp/recyclerviewdemo/Meizi.java	(revision )
+@@ -0,0 +1,26 @@
++package com.example.zcp.recyclerviewdemo;
++
++/**
++ * Created by 赵晨璞 on 2016/6/16.
++ */
++public class Meizi {
++    public String getUrl() {
++        return url;
++    }
++
++    public void setUrl(String url) {
++        this.url = url;
++    }
++
++    private String url;
++
++    public int getPage() {
++        return page;
++    }
++
++    public void setPage(int page) {
++        this.page = page;
++    }
++
++    private int page;
++}
+Index: app/src/main/java/com/example/zcp/recyclerviewdemo/LineActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/zcp/recyclerviewdemo/LineActivity.java	(revision )
++++ app/src/main/java/com/example/zcp/recyclerviewdemo/LineActivity.java	(revision )
+@@ -0,0 +1,292 @@
++package com.example.zcp.recyclerviewdemo;
++
++import android.content.Context;
++import android.graphics.Canvas;
++import android.graphics.Color;
++import android.os.AsyncTask;
++import android.os.Bundle;
++import android.support.design.widget.CoordinatorLayout;
++import android.support.v4.widget.SwipeRefreshLayout;
++import android.support.v7.app.AppCompatActivity;
++import android.support.v7.widget.LinearLayoutManager;
++import android.support.v7.widget.RecyclerView;
++import android.support.v7.widget.StaggeredGridLayoutManager;
++import android.support.v7.widget.Toolbar;
++import android.support.v7.widget.helper.ItemTouchHelper;
++import android.text.TextUtils;
++import android.util.DisplayMetrics;
++import android.util.TypedValue;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.view.WindowManager;
++import android.widget.ImageView;
++import android.widget.TextView;
++
++import com.google.gson.Gson;
++import com.google.gson.reflect.TypeToken;
++import com.squareup.picasso.Picasso;
++
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.util.Collections;
++import java.util.List;
++
++public class LineActivity extends AppCompatActivity {
++
++    private static RecyclerView recyclerview;
++    private CoordinatorLayout coordinatorLayout;
++    private MyAdapter mAdapter;
++    private List<Meizi> meizis;
++    private LinearLayoutManager mLayoutManager;
++    private int lastVisibleItem;
++    private int page = 1;
++    private ItemTouchHelper itemTouchHelper;
++    private int screenwidth;
++    private SwipeRefreshLayout swipeRefreshLayout;
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(R.layout.activity_line);
++        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
++        setSupportActionBar(toolbar);
++
++        initView();
++        setListener();
++
++        new GetData().execute("http://gank.io/api/data/福利/10/1");
++
++        //获取屏幕宽度
++        WindowManager wm = (WindowManager) LineActivity.this
++                .getSystemService(Context.WINDOW_SERVICE);
++        DisplayMetrics outMetrics = new DisplayMetrics();
++        wm.getDefaultDisplay().getMetrics(outMetrics);
++        screenwidth = outMetrics.widthPixels;
++    }
++
++    private void initView() {
++        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.line_coordinatorLayout);
++
++        recyclerview = (RecyclerView) findViewById(R.id.line_recycler);
++        mLayoutManager = new LinearLayoutManager(this);
++
++        recyclerview.setLayoutManager(mLayoutManager);
++
++        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.line_swipe_refresh);
++        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorAccent);
++        swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
++    }
++
++    private void setListener() {
++        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
++            @Override
++            public void onRefresh() {
++                page = 1;
++                new GetData().execute("http://gank.io/api/data/福利/10/1");
++            }
++        });
++
++        itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
++            @Override
++            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
++                int dragFlags = 0, swipeFlags = 0;
++                if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
++                    dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
++                } else if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
++                    dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
++                    //设置侧滑方向为从左到右和从右到左都可以
++                    swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
++                }
++                return makeMovementFlags(dragFlags, swipeFlags);
++            }
++
++            @Override
++            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
++                int from = viewHolder.getAdapterPosition();
++                int to = target.getAdapterPosition();
++                Collections.swap(meizis, from, to);
++                mAdapter.notifyItemMoved(from, to);
++                return true;
++            }
++
++            @Override
++            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
++
++                mAdapter.removeItem(viewHolder.getAdapterPosition());
++
++            }
++
++            @Override
++            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
++                super.onSelectedChanged(viewHolder, actionState);
++                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
++                    viewHolder.itemView.setBackgroundColor(Color.LTGRAY);
++                }
++            }
++
++            @Override
++            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
++                super.clearView(recyclerView, viewHolder);
++                viewHolder.itemView.setBackgroundColor(Color.WHITE);
++            }
++
++            @Override
++            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
++                viewHolder.itemView.setAlpha(1 - Math.abs(dX) / screenwidth);
++
++                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
++            }
++        });
++
++        recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
++            @Override
++            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
++                super.onScrollStateChanged(recyclerView, newState);
++//                0：当前屏幕停止滚动；1时：屏幕在滚动 且 用户仍在触碰或手指还在屏幕上；2时：随用户的操作，屏幕上产生的惯性滑动；
++                //               滑动状态停止并且剩余两个item时自动加载
++                if (newState == RecyclerView.SCROLL_STATE_IDLE
++                        && lastVisibleItem + 2 >= mLayoutManager.getItemCount()) {
++                    new GetData().execute("http://gank.io/api/data/福利/10/" + (++page));
++                }
++            }
++
++            @Override
++            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
++                super.onScrolled(recyclerView, dx, dy);
++                //                获取加载的最后一个可见视图在适配器的位置。
++                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
++
++            }
++
++        });
++    }
++
++
++    private class GetData extends AsyncTask<String, Integer, String> {
++
++        @Override
++        protected void onPreExecute() {
++            super.onPreExecute();
++
++            swipeRefreshLayout.setRefreshing(true);
++        }
++
++        @Override
++        protected String doInBackground(String... params) {
++
++            return MyOkhttp.get(params[0]);
++        }
++
++        protected void onPostExecute(String result) {
++            super.onPostExecute(result);
++            if (!TextUtils.isEmpty(result)) {
++
++                JSONObject jsonObject;
++                Gson gson = new Gson();
++                String jsonData = null;
++
++                try {
++                    jsonObject = new JSONObject(result);
++                    jsonData = jsonObject.getString("results");
++                } catch (JSONException e) {
++                    e.printStackTrace();
++                }
++                if (meizis == null || meizis.size() == 0) {
++                    meizis = gson.fromJson(jsonData, new TypeToken<List<Meizi>>() {
++                    }.getType());
++                    Meizi pages = new Meizi();
++                    pages.setPage(page);
++                    meizis.add(pages);
++                } else {
++                    List<Meizi> more = gson.fromJson(jsonData, new TypeToken<List<Meizi>>() {
++                    }.getType());
++                    meizis.addAll(more);
++                    Meizi pages = new Meizi();
++                    pages.setPage(page);
++                    meizis.add(pages);
++                }
++
++                if (mAdapter == null) {
++                    recyclerview.setAdapter(mAdapter = new MyAdapter());
++                    itemTouchHelper.attachToRecyclerView(recyclerview);
++                } else {
++                    mAdapter.notifyDataSetChanged();
++                }
++            }
++            swipeRefreshLayout.setRefreshing(false);
++        }
++    }
++
++    class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> implements View.OnClickListener {
++
++
++        @Override
++        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
++            View view = LayoutInflater.from(
++                    LineActivity.this).inflate(R.layout.line_meizi_item, parent,
++                    false);
++            MyViewHolder holder = new MyViewHolder(view);
++
++            view.setOnClickListener(this);
++
++            return holder;
++
++        }
++
++        @Override
++        public void onBindViewHolder(MyViewHolder holder, int position) {
++
++            holder.tv.setText("图" + position);
++            Picasso.with(LineActivity.this).load(meizis.get(position).getUrl()).into(holder.iv);
++
++        }
++
++        @Override
++        public int getItemCount() {
++            return meizis.size();
++        }
++
++
++        @Override
++        public void onClick(View v) {
++
++            int position = recyclerview.getChildAdapterPosition(v);
++            SnackbarUtil.ShortSnackbar(coordinatorLayout, "点击第" + position + "个", SnackbarUtil.Info).show();
++        }
++
++
++        class MyViewHolder extends RecyclerView.ViewHolder {
++            private ImageView iv;
++            private TextView tv;
++
++            public MyViewHolder(View view) {
++                super(view);
++                iv = (ImageView) view.findViewById(R.id.line_item_iv);
++                tv = (TextView) view.findViewById(R.id.line_item_tv);
++            }
++        }
++
++        public void addItem(Meizi meizi, int position) {
++            meizis.add(position, meizi);
++            notifyItemInserted(position);
++            recyclerview.scrollToPosition(position);
++        }
++
++        public void removeItem(final int position) {
++            final Meizi removed = meizis.get(position);
++            meizis.remove(position);
++            notifyItemRemoved(position);
++            SnackbarUtil.ShortSnackbar(coordinatorLayout, "你删除了第" + position + "个item", SnackbarUtil.Warning).setAction("撤销", new View.OnClickListener() {
++                @Override
++                public void onClick(View v) {
++                    addItem(removed, position);
++                    SnackbarUtil.ShortSnackbar(coordinatorLayout, "撤销了删除第" + position + "个item", SnackbarUtil.Confirm).show();
++                }
++            }).setActionTextColor(Color.WHITE).show();
++        }
++
++    }
++
++}
+Index: app/src/androidTest/java/com/example/zcp/recyclerviewdemo/ExampleInstrumentationTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/androidTest/java/com/example/zcp/recyclerviewdemo/ExampleInstrumentationTest.java	(revision )
++++ app/src/androidTest/java/com/example/zcp/recyclerviewdemo/ExampleInstrumentationTest.java	(revision )
+@@ -0,0 +1,28 @@
++//package com.example.zcp.recyclerviewdemo;
++//
++//import android.content.Context;
++//import android.support.test.InstrumentationRegistry;
++//import android.support.test.filters.MediumTest;
++//import android.support.test.runner.AndroidJUnit4;
++//
++//import org.junit.runner.RunWith;
++//import org.testng.annotations.Test;
++//
++//import static org.junit.Assert.assertEquals;
++//
++///**
++// * Instrumentation test, which will execute on an Android device.
++// *
++// * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
++// */
++//@MediumTest
++//@RunWith(AndroidJUnit4.class)
++//public class ExampleInstrumentationTest {
++//    @Test
++//    public void useAppContext() throws Exception {
++//        // Context of the app under test.
++//        Context appContext = InstrumentationRegistry.getTargetContext();
++//
++//        assertEquals("com.example.zcp.recyclerviewdemo", appContext.getPackageName());
++//    }
++//}
+\ No newline at end of file
+Index: app/src/main/res/values/dimens.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/dimens.xml	(revision )
++++ app/src/main/res/values/dimens.xml	(revision )
+@@ -0,0 +1,5 @@
++<resources>
++    <!-- Default screen margins, per the Android Design guidelines. -->
++    <dimen name="activity_horizontal_margin">16dp</dimen>
++    <dimen name="activity_vertical_margin">16dp</dimen>
++</resources>
+Index: .idea/copyright/profiles_settings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/copyright/profiles_settings.xml	(revision )
++++ .idea/copyright/profiles_settings.xml	(revision )
+@@ -0,0 +1,3 @@
++<component name="CopyrightManager">
++  <settings default="" />
++</component>
+\ No newline at end of file
+Index: gradlew
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- gradlew	(revision )
++++ gradlew	(revision )
+@@ -0,0 +1,160 @@
++#!/usr/bin/env bash
++
++##############################################################################
++##
++##  Gradle start up script for UN*X
++##
++##############################################################################
++
++# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
++DEFAULT_JVM_OPTS=""
++
++APP_NAME="Gradle"
++APP_BASE_NAME=`basename "$0"`
++
++# Use the maximum available, or set MAX_FD != -1 to use that value.
++MAX_FD="maximum"
++
++warn ( ) {
++    echo "$*"
++}
++
++die ( ) {
++    echo
++    echo "$*"
++    echo
++    exit 1
++}
++
++# OS specific support (must be 'true' or 'false').
++cygwin=false
++msys=false
++darwin=false
++case "`uname`" in
++  CYGWIN* )
++    cygwin=true
++    ;;
++  Darwin* )
++    darwin=true
++    ;;
++  MINGW* )
++    msys=true
++    ;;
++esac
++
++# Attempt to set APP_HOME
++# Resolve links: $0 may be a link
++PRG="$0"
++# Need this for relative symlinks.
++while [ -h "$PRG" ] ; do
++    ls=`ls -ld "$PRG"`
++    link=`expr "$ls" : '.*-> \(.*\)$'`
++    if expr "$link" : '/.*' > /dev/null; then
++        PRG="$link"
++    else
++        PRG=`dirname "$PRG"`"/$link"
++    fi
++done
++SAVED="`pwd`"
++cd "`dirname \"$PRG\"`/" >/dev/null
++APP_HOME="`pwd -P`"
++cd "$SAVED" >/dev/null
++
++CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
++
++# Determine the Java command to use to start the JVM.
++if [ -n "$JAVA_HOME" ] ; then
++    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
++        # IBM's JDK on AIX uses strange locations for the executables
++        JAVACMD="$JAVA_HOME/jre/sh/java"
++    else
++        JAVACMD="$JAVA_HOME/bin/java"
++    fi
++    if [ ! -x "$JAVACMD" ] ; then
++        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
++
++Please set the JAVA_HOME variable in your environment to match the
++location of your Java installation."
++    fi
++else
++    JAVACMD="java"
++    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++
++Please set the JAVA_HOME variable in your environment to match the
++location of your Java installation."
++fi
++
++# Increase the maximum file descriptors if we can.
++if [ "$cygwin" = "false" -a "$darwin" = "false" ] ; then
++    MAX_FD_LIMIT=`ulimit -H -n`
++    if [ $? -eq 0 ] ; then
++        if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
++            MAX_FD="$MAX_FD_LIMIT"
++        fi
++        ulimit -n $MAX_FD
++        if [ $? -ne 0 ] ; then
++            warn "Could not set maximum file descriptor limit: $MAX_FD"
++        fi
++    else
++        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
++    fi
++fi
++
++# For Darwin, add options to specify how the application appears in the dock
++if $darwin; then
++    GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
++fi
++
++# For Cygwin, switch paths to Windows format before running java
++if $cygwin ; then
++    APP_HOME=`cygpath --path --mixed "$APP_HOME"`
++    CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
++    JAVACMD=`cygpath --unix "$JAVACMD"`
++
++    # We build the pattern for arguments to be converted via cygpath
++    ROOTDIRSRAW=`find -L / -maxdepth 1 -mindepth 1 -type d 2>/dev/null`
++    SEP=""
++    for dir in $ROOTDIRSRAW ; do
++        ROOTDIRS="$ROOTDIRS$SEP$dir"
++        SEP="|"
++    done
++    OURCYGPATTERN="(^($ROOTDIRS))"
++    # Add a user-defined pattern to the cygpath arguments
++    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
++        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
++    fi
++    # Now convert the arguments - kludge to limit ourselves to /bin/sh
++    i=0
++    for arg in "$@" ; do
++        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
++        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
++
++        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
++            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
++        else
++            eval `echo args$i`="\"$arg\""
++        fi
++        i=$((i+1))
++    done
++    case $i in
++        (0) set -- ;;
++        (1) set -- "$args0" ;;
++        (2) set -- "$args0" "$args1" ;;
++        (3) set -- "$args0" "$args1" "$args2" ;;
++        (4) set -- "$args0" "$args1" "$args2" "$args3" ;;
++        (5) set -- "$args0" "$args1" "$args2" "$args3" "$args4" ;;
++        (6) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" ;;
++        (7) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" ;;
++        (8) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" ;;
++        (9) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" "$args8" ;;
++    esac
++fi
++
++# Split up the JVM_OPTS And GRADLE_OPTS values into an array, following the shell quoting and substitution rules
++function splitJvmOpts() {
++    JVM_OPTS=("$@")
++}
++eval splitJvmOpts $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS
++JVM_OPTS[${#JVM_OPTS[*]}]="-Dorg.gradle.appname=$APP_BASE_NAME"
++
++exec "$JAVACMD" "${JVM_OPTS[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/encodings.xml	(revision )
++++ .idea/encodings.xml	(revision )
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Encoding">
++    <file url="PROJECT" charset="UTF-8" />
++  </component>
++</project>
+\ No newline at end of file
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(revision )
++++ app/src/main/res/values/strings.xml	(revision )
+@@ -0,0 +1,6 @@
++<resources>
++    <string name="app_name">RecyclerViewDemo</string>
++    <string name="title_activity_line">线性布局</string>
++    <string name="title_activity_grid">网格布局</string>
++    <string name="title_activity_staggerde">交错网格布局</string>
++</resources>
+Index: app/src/main/res/layout/line_meizi_item.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/line_meizi_item.xml	(revision )
++++ app/src/main/res/layout/line_meizi_item.xml	(revision )
+@@ -0,0 +1,23 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="150dp"
++    android:background="#ffffff"
++    android:layout_marginTop="10dp"
++    >
++    <ImageView
++        android:id="@+id/line_item_iv"
++        android:layout_width="wrap_content"
++        android:layout_height="match_parent"
++        android:layout_margin="5dp"
++        android:adjustViewBounds="true"
++        android:scaleType="centerCrop"
++        />
++    <TextView
++        android:id="@+id/line_item_tv"
++        android:layout_width="0dp"
++        android:layout_height="match_parent"
++        android:layout_weight="1"
++        android:gravity="center"
++        android:background="?android:attr/selectableItemBackground"/>
++</LinearLayout>
